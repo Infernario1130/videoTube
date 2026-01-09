@@ -227,4 +227,32 @@ const changeCurrentPassword = asyncHandler( async( req , res ) => {
 
 })
 
-export { registerUser , loginUser , refreshAccessToken , logoutUser , changeCurrentPassword }
+const getCurrentUser = asyncHandler( async( req , res) => {
+     const userId = req.user._id;
+
+     const user = await User.findById(userId).select("-password -refreshToken")
+
+     if (!user) {
+          throw new ApiError( 404 , "User does not exist.")
+     }
+
+     return res
+     .status(200)
+     .json( new ApiResponse( 200 , {
+          user : user
+     } , "User fetched successfully."))
+})
+
+const updateAccountDetails = asyncHandler( async( req , res ) => {
+
+})
+
+const updateUserAvatar = asyncHandler( async( req , res ) => {
+
+})
+
+const updateUserCoverImage = asyncHandler( async ( req , res ) => {
+
+})
+
+export { registerUser , loginUser , refreshAccessToken , logoutUser , changeCurrentPassword , getCurrentUser , updateAccountDetails , updateUserAvatar , updateUserCoverImage }

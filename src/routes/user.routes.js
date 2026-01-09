@@ -4,7 +4,8 @@ import { verifyJWT } from "../middlewares/auth.middlewares.js"
 import { registerUser,
          loginUser ,
          logoutUser ,
-         changeCurrentPassword
+         changeCurrentPassword ,
+         getCurrentUser
  } from "../controllers/user.controllers.js"
 
 const router = Router();
@@ -28,5 +29,7 @@ router.route("/login").post(loginUser);
 router.route("/logout").get(verifyJWT , logoutUser);
 
 router.route("/change-password").post(verifyJWT , changeCurrentPassword)
+
+router.route("/current-user").get(verifyJWT , getCurrentUser )
 
 export default router;

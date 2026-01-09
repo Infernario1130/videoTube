@@ -26,4 +26,3 @@ export const verifyJWT = asyncHandler( async ( req , res , next) => {
     }
 });
 
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTVmNDljMjFmYzIxZjYxMzY0OTdjNzgiLCJpYXQiOjE3Njc5NDcxNjIsImV4cCI6MTc2ODAzMzU2Mn0.QGX8E61DwHRMGBE5PkSpzUOvQ8p3Qwd32bFUsRvXrNA
