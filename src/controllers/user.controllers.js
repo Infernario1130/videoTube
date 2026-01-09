@@ -282,7 +282,7 @@ const updateUserAvatar = asyncHandler( async( req , res ) => {
      const updatedAvatarPath = req.file?.path;
 
      if ( !updatedAvatarPath ) {
-          throw new ApiError( 400 , "Avatar is required.")
+          throw new ApiError( 400 , "New avatar is required.")
      }
 
      const userId = req.user?._id;
@@ -290,7 +290,7 @@ const updateUserAvatar = asyncHandler( async( req , res ) => {
      const user = await User.findById(userId).select("-password -refreshToken")
 
      if ( !user ) {
-          throw new ApiError( 400 , "User does not exist.")
+          throw new ApiError( 404 , "User does not exist.")
      }
 
      const updatedAvatar = await uploadCloudinary(updatedAvatarPath);
@@ -310,7 +310,31 @@ const updateUserAvatar = asyncHandler( async( req , res ) => {
 })
 
 const updateUserCoverImage = asyncHandler( async ( req , res ) => {
+     const updatedCoverImagePath = req.file?.path;
 
+     if ( !updatedCoverImagePath ) {
+          throw new ApiError( 400 , "New cover image is required.")
+     }
+
+     const userId = req.user?._id;
+
+     const user = await User.findById(userId);
+
+     if ( !user ) {
+          throw new ApiError( 404 , "User does not exist.")
+     }
+
+     const updatedCoverImage = await uploadCloudinary(updatedCoverImagePath);
+
+     if ( !updatedCoverImage ) {
+          throw new ApiError( 500 , "Something went wrong while uploading cover image.")
+     }
+
+     user.coverImage = updatedCoverImage.url;
+
+     await user.save({ validateBeforeSave : true});
+
+     return new ApiResponse(200 , updatedCoverImage.url , "Cover image updated successfully.")
 })
 
 export { registerUser , loginUser , refreshAccessToken , logoutUser , changeCurrentPassword , getCurrentUser , updateAccountDetails , updateUserAvatar , updateUserCoverImage }
