@@ -279,6 +279,33 @@ const updateAccountDetails = asyncHandler( async( req , res ) => {
 })
 
 const updateUserAvatar = asyncHandler( async( req , res ) => {
+     const updatedAvatarPath = req.file?.path;
+
+     if ( !updatedAvatarPath ) {
+          throw new ApiError( 400 , "Avatar is required.")
+     }
+
+     const userId = req.user?._id;
+
+     const user = await User.findById(userId).select("-password -refreshToken")
+
+     if ( !user ) {
+          throw new ApiError( 400 , "User does not exist.")
+     }
+
+     const updatedAvatar = await uploadCloudinary(updatedAvatarPath);
+
+     if ( !updatedAvatar ) {
+          throw new ApiError( 500 , "Something went wrong while uploading avatar.")
+     }
+
+     user.avatar = updatedAvatar.url;
+
+     await user.save({ validateBeforeSave : false });
+
+     return res
+     .status(200)
+     .json( new ApiResponse(200 , updatedAvatar.url , "Avatar updated successfully."))
 
 })
 
