@@ -244,7 +244,38 @@ const getCurrentUser = asyncHandler( async( req , res) => {
 })
 
 const updateAccountDetails = asyncHandler( async( req , res ) => {
+     const { email , fullName } = req.body;
 
+     if ( !email ) {
+          throw new ApiError( 400 , "Email is required.")
+     };
+
+     if ( !fullName ) {
+          throw new ApiError( 400 , "Fullname is required.")
+     };
+
+     const userId = req.user?._id;
+
+     const updatedUser = await User.findByIdAndUpdate(
+          userId , 
+          {
+             $set : {
+               email : email ,
+               fullName : fullName
+             }   
+          } ,
+          {
+               new : true
+          }
+     ).select("-password -refreshToken")
+
+     if ( !updatedUser ) {
+          throw new ApiError( 404 , "User does not exist." )
+     }
+
+     return res
+     .status(200)
+     .json(new ApiResponse(200 , updatedUser , "User updated successfully." ))
 })
 
 const updateUserAvatar = asyncHandler( async( req , res ) => {

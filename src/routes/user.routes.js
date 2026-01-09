@@ -5,7 +5,10 @@ import { registerUser,
          loginUser ,
          logoutUser ,
          changeCurrentPassword ,
-         getCurrentUser
+         getCurrentUser ,
+         updateAccountDetails ,
+         updateUserAvatar ,
+         updateUserCoverImage
  } from "../controllers/user.controllers.js"
 
 const router = Router();
@@ -28,8 +31,14 @@ router.route("/login").post(loginUser);
 
 router.route("/logout").get(verifyJWT , logoutUser);
 
-router.route("/change-password").post(verifyJWT , changeCurrentPassword)
+router.route("/change-password").post(verifyJWT , changeCurrentPassword);
 
-router.route("/current-user").get(verifyJWT , getCurrentUser )
+router.route("/current-user").get(verifyJWT , getCurrentUser);
+
+router.route("/update-account").patch(verifyJWT , updateAccountDetails);
+
+router.route("/avatar").patch(verifyJWT , upload.single("avatar") , updateUserAvatar);
+
+router.route("/cover-image").patch(verifyJWT , upload.single("coverImage") , updateUserCoverImage)
 
 export default router;
