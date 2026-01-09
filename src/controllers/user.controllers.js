@@ -164,14 +164,14 @@ const refreshAccessToken = asyncHandler( async ( req , res ) => {
           const user = await User.findById(decodedToken?._id)
 
           if (!user) {
-               throw new ApiError( 401 , "Refresh token in expired or used." )
+               throw new ApiError( 401 , "Refresh token is expired or used." )
           }
 
           if (user?.refreshToken !== incomingRefreshToken) {
                throw new ApiError( 401 , "Refresh token is expired or used.")
           }
 
-          const { accessToken , refreshToken } = await generateAccessAndRefreshToken(user._id);
+          const { accessToken , refreshToken : newRefreshToken } = await generateAccessAndRefreshToken(user._id);
           
           const options = {
                httpOnly : true ,
@@ -191,6 +191,40 @@ const refreshAccessToken = asyncHandler( async ( req , res ) => {
      } catch (error) {
           throw new ApiError(401 , error?.message || "Invalid refresh token")
      }
+});
+
+const changeCurrentPassword = asyncHandler( async( req , res ) => {
+     const { currentPassword , newPassword } = req.body;
+
+     if ([ currentPassword , newPassword ].some((field) =>  
+          !field || field.trim() === ""
+     )) {
+          throw new ApiError( 400 , "Required fields are missing.")
+     }
+
+     const userId = req.user._id ;
+
+     const user = await User.findById(userId)
+
+     if ( !user ) {
+          throw new ApiError( 404 , "User does not exists.")
+     }
+
+     const isPasswordValid = await user.isPasswordCorrect(currentPassword);
+
+     if ( !isPasswordValid ) {
+          throw new ApiError( 401 , "Invalid current password.")
+     }
+
+      user.password = newPassword ;
+
+      await user.save({ validateBeforeSave : false });
+
+      return res
+      .status(200)
+      .json( new ApiResponse(200 , { } , "Password changed successfully.") )
+
+
 })
 
-export { registerUser , loginUser , refreshAccessToken , logoutUser }
+export { registerUser , loginUser , refreshAccessToken , logoutUser , changeCurrentPassword }
