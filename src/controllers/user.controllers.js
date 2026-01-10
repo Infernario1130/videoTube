@@ -402,7 +402,29 @@ const getUserChannelProfile = asyncHandler( async ( req , res ) => {
 })
 
 const getWatchHistory = asyncHandler( async ( req , res ) => {
+     const userId = new mongoose.Types.ObjectId(req.user?._id);
 
+     const watchHistory = await User.aggregate([
+          {
+               $match : {
+                    _id : userId
+               }
+          } ,
+           {
+               $lookup : {
+                    from : "videos" ,
+                    localField : "watchHistory" ,
+                    foreignField : "_id" ,
+                    as : "watchHistory"
+               }
+           }
+     ])
+
+     return res
+     .status(200)
+     .json(
+          new ApiResponse(200 , watchHistory[0]?.watchHistory , "Watch history fetched successfully.")
+     ) 
 })
 
 
