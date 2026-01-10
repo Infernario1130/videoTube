@@ -12,7 +12,7 @@ const router = Router();
 router.use(verifyJWT)
 
 router.route("/").post(createTweet);
-router.route("/user/:userId").get(getUserTweets);
+router.route("/user").get(getUserTweets);
 router.route("/:tweetId").patch(updateTweet);
 router.route("/:tweetId").delete(deleteTweet);
 

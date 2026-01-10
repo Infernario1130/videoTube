@@ -37,7 +37,33 @@ const createTweet = asyncHandler ( async ( req , res ) => {
 })
 
 const getUserTweets = asyncHandler ( async ( req , res ) => {
+    const userId = req.user?._id;
 
+    if ( !userId ) {
+        throw new ApiError( 401 , "Unauthorized request")
+    }
+
+    const tweets = await Tweet.aggregate([
+        {
+            $match : {
+                owner : userId
+            }
+        } ,
+        {
+            $project : {
+                _id : 1 ,
+                content : 1 ,
+                owner : 1
+            }
+        }
+    ])
+
+    return res
+    .status(200)
+    .json( new ApiResponse(200 , {
+        tweets
+    } , "All the tweets of the user."
+ ))
 })
 
 const updateTweet = asyncHandler ( async ( req , res ) => {
