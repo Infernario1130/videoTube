@@ -1,8 +1,9 @@
 import express from "express";
-import cors from "cors";
-import healthcheckRouter from "./routes/healthcheck.routes.js"
+import cors from "cors";``
+import healthcheckRouter from "./routes/healthcheck.routes.js";
 import cookieParser from "cookie-parser";
-import userRouter from "./routes/user.routes.js"
+import userRouter from "./routes/user.routes.js";
+import tweetRouter from "./routes/tweet.routes.js";
 
 const app = express();
 
@@ -17,5 +18,6 @@ app.use(cors({
 
 app.use("/api/v1/healthcheck" , healthcheckRouter);
 app.use("/api/v1/users" , userRouter);
+app.use("/api/v1/tweets" , tweetRouter);
 
 export default app;
